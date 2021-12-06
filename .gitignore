@@ -1,0 +1,5 @@
+.env
+key.json
+.auto-update-price
+__pycache__/
+*.ipynb
