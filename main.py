@@ -1,6 +1,5 @@
 import os
 import ast
-import json
 import gspread
 from dotenv import load_dotenv, find_dotenv
 from get_price import get_price_history
@@ -24,7 +23,7 @@ credentials = Credentials.from_service_account_info(
 )
 
 
-df = get_price_history('HPG','01-01-2019','01-01-2021')
+df = get_price_history('HPG','01-01-2020','01-01-2021')
 
 gc = gspread.authorize(credentials)
 
