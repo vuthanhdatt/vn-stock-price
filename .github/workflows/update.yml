@@ -1,0 +1,28 @@
+name: auto-update
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "15 8 * * 1-5" #Run at 8:15 UTC every day except weekend
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout repo content
+        uses: actions/checkout@v2 # checkout the repository content to github runner
+
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9.7' # install the python version needed
+          
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: execute py script # run main.py to update the lastest data
+        env:
+          SHEET_KEY: ${{secrets.SHEET_KEY}}
+        run: python main.py
