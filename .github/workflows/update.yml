@@ -25,4 +25,5 @@ jobs:
       - name: execute py script # run main.py to update the lastest data
         env:
           SHEET_KEY: ${{secrets.SHEET_KEY}}
+          COOKIES: ${{secrets.COOKIES}}
         run: python main.py
