@@ -1,6 +1,7 @@
 import os
 import ast
 import gspread
+import time
 from dotenv import load_dotenv, find_dotenv
 from get_price import get_price_history
 from gspread_dataframe import  set_with_dataframe
@@ -45,6 +46,7 @@ for com in com_list:
     worksheet = sh.worksheet(com)
     worksheet.clear()
     set_with_dataframe(worksheet, df, include_index=True)
+    time.sleep(1)
 
 
 
