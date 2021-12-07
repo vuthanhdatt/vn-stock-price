@@ -39,6 +39,7 @@ def auto(list_com, exchange, sheet_id):
         # set_with_dataframe(worksheet, df, include_index=True)
         df.to_csv(f'{exchange}/{com}.csv')
         # time.sleep(1.8)
+        print(f"{com} DONE!")
 
 
 if __name__ == "__main__":
