@@ -39,14 +39,11 @@ sh = gc.open_by_key(HSX_SHEET_ID)
 
 for com in com_list:
     df = get_price_history(com,start_date,today)
-    try:
-        worksheet = sh.add_worksheet(title=com, rows="5000", cols="10")
-    except:
-        pass
+    worksheet = sh.add_worksheet(title=com, rows="5000", cols="10")
     worksheet = sh.worksheet(com)
-    worksheet.clear()
     set_with_dataframe(worksheet, df, include_index=True)
-    time.sleep(1)
+    time.sleep(3)
+    
 
 
 
