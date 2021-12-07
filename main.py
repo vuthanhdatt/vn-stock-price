@@ -32,7 +32,7 @@ gc = gspread.authorize(credentials)
 
 def auto(list_com, exchange, sheet_id):
     sh = gc.open_by_key(sheet_id)
-    for com in list_com[:2]:
+    for com in list_com:
         df = get_price_history(com, start_date, today)
         worksheet = sh.add_worksheet(title=com, rows="100", cols="4")
         worksheet = sh.worksheet(com)
