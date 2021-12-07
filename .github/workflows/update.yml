@@ -27,3 +27,14 @@ jobs:
           SHEET_KEY: ${{secrets.SHEET_KEY}}
           COOKIES: ${{secrets.COOKIES}}
         run: python main.py
+      - name: commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "Auto update data" -a
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{secrets.ACCESS_TOKEN_GITHUB}}
+          branch: main  
