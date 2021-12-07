@@ -23,14 +23,15 @@ scopes = [
 ]
 today = date.today().strftime("%m-%d-%Y")
 start_date = '01-01-2000'
-cookie = ast.literal_eval(COOKIES)
-com_list = get_all_com('hose',cookie,header)
+
 
 service_account_info = ast.literal_eval(SHEET_KEY)
 credentials = Credentials.from_service_account_info(
     service_account_info,
     scopes=scopes
 )
+cookie = ast.literal_eval(COOKIES)
+com_list = get_all_com('hose',cookie,header)
 gc = gspread.authorize(credentials)
 HSX_SHEET_ID ='1kKnFR1qmFuEN7YNtxjWYJI0xee2uVdXcHdLHsiSTosA'
 sh = gc.open_by_key(HSX_SHEET_ID)
