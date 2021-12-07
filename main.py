@@ -13,7 +13,7 @@ from datetime import date
 load_dotenv(find_dotenv())
 
 SHEET_KEY = os.getenv('SHEET_KEY')
-cookie = ast.literal_eval(os.getenv('COOKIES'))
+COOKIES = os.getenv('COOKIES')
 
 header = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36 Edg/95.0.1020.40'}
 
@@ -23,6 +23,7 @@ scopes = [
 ]
 today = date.today().strftime("%m-%d-%Y")
 start_date = '01-01-2000'
+cookie = ast.literal_eval(COOKIES)
 com_list = get_all_com('hose',cookie,header)
 
 service_account_info = ast.literal_eval(SHEET_KEY)
@@ -52,4 +53,3 @@ for com in com_list:
 if __name__ == "__main__":
     pass
     # print(get_all_com("hose",cookie,header))
-    
