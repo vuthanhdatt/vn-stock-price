@@ -146,8 +146,8 @@ if __name__ == "__main__":
 
     loop = asyncio.get_event_loop()
     hose = loop.run_until_complete(github('hose',hose_com))
-    hnx = loop.run_until_complete(github('hnx',hnx_com))
-    upcom = loop.run_until_complete(github('upcom',upcom_com))
+    # hnx = loop.run_until_complete(github('hnx',hnx_com))
+    # upcom = loop.run_until_complete(github('upcom',upcom_com))
     loop.run_until_complete(sheet(agcm,HOSE_SHEET_ID,hose_com,hose))
     # loop.run_until_complete(sheet(agcm,HNX_SHEET_ID,hose_com,hnx))
     # loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID,upcom_com,upcom))
