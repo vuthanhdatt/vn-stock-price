@@ -19,7 +19,14 @@ SHEET_KEY = os.getenv('SHEET_KEY')
 service_account_info = ast.literal_eval(SHEET_KEY)
 start_date = '2000-01-01'
 today = date.today().strftime("%Y-%m-%d")
-logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%m-%y %H:%M:%S')
+
+#logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s","%d-%m-%y %H:%M:%S")
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 scopes = [
     'https://www.googleapis.com/auth/spreadsheets',
@@ -35,14 +42,14 @@ gc = gspread.authorize(credentials)
 
 def auto(list_com, exchange, sheet_id):
     sh = gc.open_by_key(sheet_id)
-    for com in list_com[:5]:
+    for com in list_com[:4]:
         df = get_price_history(com, start_date, today)
         worksheet = sh.add_worksheet(title=com, rows="100", cols="4")
         worksheet = sh.worksheet(com)
         set_with_dataframe(worksheet, df, include_index=True)
         # df.to_csv(f'{exchange}/{com}.csv')
         # time.sleep(1.8)
-        logging.info(f"{com} DONE!")
+        logger.info(f"{com} DONE!")
 
 
 if __name__ == "__main__":
