@@ -48,11 +48,11 @@ def make_price_history_df(df):
     cols = ['Date', 'Volume', 'Open', 'Close', 'High',
            'Low', 'Adj Close']
     df.columns = cols
-    df.reset_index(inplace=True)
     # df = df.set_index('Date')
     df = df.reindex(['Date','High', 'Low', 'Open', 'Close', 'Volume',
                     'Adj Close',], axis='columns')
     df = df.reindex(index=df.index[::-1])
+    df.reset_index(inplace=True, drop=True)
                     
     return df
 async def get_price_history(symbol,start,end):

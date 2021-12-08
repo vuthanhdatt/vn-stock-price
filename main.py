@@ -66,18 +66,33 @@ def get_credendital():
 )
     return credentials
 
-async def test(agcm, sheet_id, com):
+
+async def github(exchange, com_list):
+    D = {}
+    semaphore = asyncio.Semaphore(10)
+    async def one_iteration(com):
+        async with semaphore:
+            logger.info(f'{com} DONE!')
+            result = await get_price_history(com,'2020-10-10',today)
+            # result.to_csv(f'{exchange}/{com}.csv')
+            D[com] = result
+
+    coros = [one_iteration(com) for com in com_list]
+    await asyncio.gather(*coros)
+    return D
+
+async def sheet(agcm, sheet_id,com_list,D):
     agc = await agcm.authorize()
     ss = await agc.open_by_key(sheet_id)
-    df = get_price_history(com, start_date, today)
-    row = df.shape[0]
-    ws = await ss.add_worksheet(title=com, rows="100", cols="7")
-    ws = await ss.worksheet(com)
-    await ws.update(f'A1:G{row}',df.values.tolist())
-    print(com)
-
-async def main(agcm, sheet_id,com_list):
-    coro = [test(agcm,sheet_id,com) for com in com_list]
+    async def test(com):
+        # df = get_price_history(com, start_date, today)
+        df = D[com]
+        row = df.shape[0] +1
+        ws = await ss.add_worksheet(title=com, rows="100", cols="7")
+        ws = await ss.worksheet(com)
+        await ws.update(f'A1:H{row}',[df.columns.values.tolist()] + df.values.tolist())
+        logger.info(f"{com} SHEET DONE!")
+    coro = [test(com) for com in com_list]
     await asyncio.gather(*coro)
 
 if __name__ == "__main__":
@@ -89,12 +104,12 @@ if __name__ == "__main__":
     hnx_com = get_all_com('hnx', cookie, header)
     upcom_com = get_all_com('upcom', cookie, header)
 
-    # # HOSE_SHEET_ID = '12VgHndPoEwJzS0G1qvDeXbmspqvK7xyCDanuTmK_xx8'
-    # # HNX_SHEET_ID = '189L98z5PEXTuHfeIeQV0C-ZX09joZcNmfoBtj1fF6xc'
-    # # UPCOM_SHEET_ID = '1nKGCSeOFq36HHu-DK0YTFBX02wl2z6k2t1Hc5ApxNvA'
+    HOSE_SHEET_ID = '1Br0SphvPJH5PZ0JSFtZk24dHUsR17uxIM4s38GBCAA4'
+    HNX_SHEET_ID = '1wM8UK3UbDGQJk_TkF292vYSe2OC4chxLTHVmta9D16A'
+    UPCOM_SHEET_ID = '1WAHZEe6Hgzua7izI9T3wFK7Rre1KSZVQKIG9sHGzYis'
     TEST_SHEET_ID = '1KykDw2GYpiCuJluz_TC06nECDuzHjEI5hGSmb7VSxW8'
 
-    # # # # auto(hose_com, 'hose', HOSE_SHEET_ID)
+    # auto(hose_com, 'hose', HOSE_SHEET_ID)
     # # # # auto(hnx_com, 'hnx', HNX_SHEET_ID)
     # # # # auto(upcom_com, 'upcom', UPCOM_SHEET_ID)
     # # # sh = gc.open_by_key(TEST_SHEET_ID)
@@ -104,7 +119,7 @@ if __name__ == "__main__":
     # # # worksheet = sh.worksheet('TEST')
     # # # worksheet.update([[42,43], [43,45]])
     # # # print([df.columns.values.tolist()])
-    # agcm = gspread_asyncio.AsyncioGspreadClientManager(get_credendital)
+    agcm = gspread_asyncio.AsyncioGspreadClientManager(get_credendital)
     # # for com in hose_com:
     # #     asyncio.run(test(agcm,TEST_SHEET_ID,com), debug=True)
     # # # print(df)
@@ -118,19 +133,24 @@ if __name__ == "__main__":
     # async def second():
     #     await asyncio.sleep(1)
     #     return "2"
-    semaphore = asyncio.Semaphore(10)
-    async def github(exchange, com_list):
-        async def one_iteration(com):
-            async with semaphore:
-                logger.info(f'{com} DONE!')
-                result = await get_price_history(com,start_date,today)
-                result.to_csv(f'{exchange}/{com}.csv')
+    # import pandas as pd
+    # d = {'col1': [1, 2,3], 'col2': [3, 4,5]}
+    # d2 = {'col1': [1, 2], 'col2': [3, 4]}
+    # d3 = {'col1': [1, 2,3,4], 'col2': [3, 4,5,6]}
+    
+    # df = pd.DataFrame(data=d)
+    # df2 = pd.DataFrame(data=d2)
+    # df3 = pd.DataFrame(data=d3)
+    # T = {'1':df,'2':df2,'3':df3}
 
-        coros = [one_iteration(com) for com in com_list]
-        await asyncio.gather(*coros)
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(github('hose',hose_com))
-    loop.run_until_complete(github('hnx',hnx_com))
-    loop.run_until_complete(github('upcom',upcom_com))
-
+    hose = loop.run_until_complete(github('hose',hose_com))
+    hnx = loop.run_until_complete(github('hnx',hnx_com))
+    upcom = loop.run_until_complete(github('upcom',upcom_com))
+    loop.run_until_complete(sheet(agcm,HOSE_SHEET_ID,hose_com,hose))
+    loop.run_until_complete(sheet(agcm,HNX_SHEET_ID,hose_com,hnx))
+    loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID,upcom_com,upcom))
+    # file = open("sample2.txt", "w")
+    # file.write(repr(T))
+    # file.close()
     
