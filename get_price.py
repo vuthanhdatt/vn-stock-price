@@ -1,5 +1,8 @@
 import pandas as pd
+import aiohttp
+import asyncio
 import requests
+
 
 
 def make_price_history_form(symbol, start, end):
@@ -45,13 +48,14 @@ def make_price_history_df(df):
     cols = ['Date', 'Volume', 'Open', 'Close', 'High',
            'Low', 'Adj Close']
     df.columns = cols
-    df = df.set_index('Date')
-    df = df.reindex(['High', 'Low', 'Open', 'Close', 'Volume',
+    df.reset_index(inplace=True)
+    # df = df.set_index('Date')
+    df = df.reindex(['Date','High', 'Low', 'Open', 'Close', 'Volume',
                     'Adj Close',], axis='columns')
     df = df.reindex(index=df.index[::-1])
                     
     return df
-def get_price_history(symbol,start,end):
+async def get_price_history(symbol,start,end):
 
     '''
     Take price history of specific company from start to end, coming with user cookies.
@@ -70,9 +74,22 @@ def get_price_history(symbol,start,end):
     url = 'https://finance.vietstock.vn/data/ExportTradingResult'
     headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36 Edg/95.0.1020.40'}
     form = make_price_history_form(symbol,start,end)
-    r = requests.get(url, headers= headers, data=form)
-    df = pd.read_html(r.text)[1]
-    result = make_price_history_df(df)    
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=headers, data=form) as response:
+            html = await response.text()
+            df = pd.read_html(html)[1]
+            result = make_price_history_df(df)    
     return result
+    # url = 'https://finance.vietstock.vn/data/ExportTradingResult'
+    # headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36 Edg/95.0.1020.40'}
+    # form = make_price_history_form(symbol,start,end)
+    # r = requests.get(url, headers= headers, data=form)
+    # df = pd.read_html(r.text)[1]
+    # result = make_price_history_df(df)    
+    # return result
 
-
+if __name__ == '__main__':
+    # loop = asyncio.get_event_loop()
+    # a = loop.run_until_complete(get_price_history('VCB','2020-01-01','2021-01-01'))
+    # print(a)
+    pass
