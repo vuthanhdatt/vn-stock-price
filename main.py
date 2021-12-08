@@ -42,13 +42,18 @@ gc = gspread.authorize(credentials)
 
 def auto(list_com, exchange, sheet_id):
     sh = gc.open_by_key(sheet_id)
-    for com in list_com[:4]:
+    i = -4
+    e = 2.718281
+    for com in list_com:
         df = get_price_history(com, start_date, today)
         worksheet = sh.add_worksheet(title=com, rows="100", cols="4")
         worksheet = sh.worksheet(com)
         set_with_dataframe(worksheet, df, include_index=True)
-        # df.to_csv(f'{exchange}/{com}.csv')
-        # time.sleep(1.8)
+        df.to_csv(f'{exchange}/{com}.csv')
+        i += 0.01
+        t = 1.8 - e**i
+        if t>0:
+            time.sleep(t)
         logger.info(f"{com} DONE!")
 
 
@@ -59,7 +64,7 @@ if __name__ == "__main__":
 
     # hose_com = get_all_com('hose', cookie, header)
     hnx_com = get_all_com('hnx', cookie, header)
-    # upcom_com = get_all_com('upcom', cookie, header)
+    upcom_com = get_all_com('upcom', cookie, header)
 
     HOSE_SHEET_ID = '12VgHndPoEwJzS0G1qvDeXbmspqvK7xyCDanuTmK_xx8'
     HNX_SHEET_ID = '189L98z5PEXTuHfeIeQV0C-ZX09joZcNmfoBtj1fF6xc'
@@ -67,4 +72,4 @@ if __name__ == "__main__":
 
     # auto(hose_com, 'hose', HOSE_SHEET_ID)
     auto(hnx_com, 'hnx', HNX_SHEET_ID)
-    # auto(upcom_com, 'upcom', UPCOM_SHEET_ID)
+    auto(upcom_com, 'upcom', UPCOM_SHEET_ID)
