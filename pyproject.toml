@@ -1,0 +1,5 @@
+[tool.autopep8]
+max_line_length = 100
+
+[tool.isort]
+skip = [".auto-update-price"]
