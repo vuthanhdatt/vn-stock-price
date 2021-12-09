@@ -1,9 +1,5 @@
 import pandas as pd
 import aiohttp
-import asyncio
-import requests
-
-
 
 def make_price_history_form(symbol, start, end):
     '''
