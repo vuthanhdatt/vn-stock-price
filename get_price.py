@@ -53,7 +53,7 @@ def make_price_history_df(df):
                     'Adj Close',], axis='columns')
     df = df.reindex(index=df.index[::-1])
     df.reset_index(inplace=True, drop=True)
-                    
+    df.fillna('-', inplace=True)
     return df
 async def get_price_history(symbol,start,end):
 
@@ -92,4 +92,15 @@ if __name__ == '__main__':
     # loop = asyncio.get_event_loop()
     # a = loop.run_until_complete(get_price_history('VCB','2020-01-01','2021-01-01'))
     # print(a)
+    # # print([a.values.tolist()[0]])
+    # def value(df):
+    #     row = df.shape[0] +1
+    #     l = []
+    #     for i in range(1,row,1):
+    #         d = {}
+    #         d['range'] = f'A{i}:G{i}'
+    #         d['values'] = [df.values.tolist()[i-1]]
+    #         l.append(d)
+    #     return l
+    # print(value(a))
     pass

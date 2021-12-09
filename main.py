@@ -81,13 +81,25 @@ async def github(exchange, com_list):
     await asyncio.gather(*coros)
     return D
 
+######### FOR USING BATCH_UPDATE #############   
+# def value(df):
+#     row = df.shape[0] +1
+#     l = []
+#     for i in range(1,row,1):
+#         d = {}
+#         d['range'] = f'A{i}:G{i}'
+#         d['values'] = [df.values.tolist()[i-1]]
+#         l.append(d)
+#     return l
+
 async def sheet(agcm, sheet_id,com_list,D):
-    
+    agc = await agcm.authorize()
+    ss = await agc.open_by_key(sheet_id)
+
     async def test(com):
-        agc = await agcm.authorize()
-        ss = await agc.open_by_key(sheet_id)
         # df = get_price_history(com, start_date, today)
         df = D[com]
+        # value_update = value(df)
         row = df.shape[0] +1
         # ws = await ss.add_worksheet(title=com, rows="100", cols="7")
         ws = await ss.worksheet(com)
@@ -102,8 +114,8 @@ if __name__ == "__main__":
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36 Edg/95.0.1020.40'}
 
     hose_com = get_all_com('hose', cookie, header)
-    hnx_com = get_all_com('hnx', cookie, header)
-    upcom_com = get_all_com('upcom', cookie, header)
+    # hnx_com = get_all_com('hnx', cookie, header)
+    # upcom_com = get_all_com('upcom', cookie, header)
 
     HOSE_SHEET_ID = '1Br0SphvPJH5PZ0JSFtZk24dHUsR17uxIM4s38GBCAA4'
     # HNX_SHEET_ID = '1wM8UK3UbDGQJk_TkF292vYSe2OC4chxLTHVmta9D16A'
@@ -143,7 +155,7 @@ if __name__ == "__main__":
     # df2 = pd.DataFrame(data=d2)
     # df3 = pd.DataFrame(data=d3)
     # T = {'1':df,'2':df2,'3':df3}
-
+    # hose_com = ['CLW','DTL','DTT']
     loop = asyncio.get_event_loop()
     hose = loop.run_until_complete(github('hose',hose_com))
     # hnx = loop.run_until_complete(github('hnx',hnx_com))
