@@ -148,6 +148,6 @@ if __name__ == "__main__":
     upcom = loop.run_until_complete(github('upcom',upcom_com))
 
     loop.run_until_complete(sheet(agcm,HOSE_SHEET_ID,hose_com,hose))
-    loop.run_until_complete(sheet(agcm,HNX_SHEET_ID,hose_com,hnx))
+    loop.run_until_complete(sheet(agcm,HNX_SHEET_ID,hnx_com,hnx))
     loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID,upcom_com,upcom))
     
