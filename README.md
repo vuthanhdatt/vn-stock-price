@@ -13,7 +13,11 @@ User can access to each individual company in 3 folder [hose](https://github.com
 
 ## Improvement
 Currently, I'm calling to `google.apps.sheets.v4.SpreadsheetsService.UpdateValues` API to update value of entire sheet. 
+
 ![google sheet api](https://github.com/vuthanhdatt/vn-stock-price/blob/main/images/sheet-api.png)
+
 This make requests have high latency and time to finish updating all over 1600 companies up to 3 hours although using asynchronous. 
+
 ![time finish](https://github.com/vuthanhdatt/vn-stock-price/blob/main/images/time-finish.png)
+
 In my calculation, with google sheet API limit 100 request/s, time can reduce to 1-1.5h to update all companies. This project is just finished and not yet optimize, in near future I will update my code.
