@@ -1,8 +1,8 @@
 name: auto-update
 on:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
   schedule:
     - cron: "15 8 * * 1-5" #Run at 8:15 UTC every day except weekend
 jobs:
