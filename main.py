@@ -148,8 +148,11 @@ if __name__ == "__main__":
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36 Edg/95.0.1020.40'}
 
     hose_com = get_all_com('hose', cookie, header)
+    logger.info('Load all com hose')
     hnx_com = get_all_com('hnx', cookie, header)
+    logger.info('Load all com hnx')
     upcom_com = get_all_com('upcom', cookie, header)
+    logger.info('Load all com upcom')
 
     HOSE_SHEET_ID = '1Br0SphvPJH5PZ0JSFtZk24dHUsR17uxIM4s38GBCAA4'
     HNX_SHEET_ID = '1wM8UK3UbDGQJk_TkF292vYSe2OC4chxLTHVmta9D16A'
@@ -167,7 +170,7 @@ if __name__ == "__main__":
     # loop.run_until_complete(sheet(agcm,HNX_SHEET_ID,hnx_com,hnx_df_dict))
     # loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID,upcom_com,upcom_df_dict))
 
-    loop.run_until_complete(add_rows(agcm,TEST_SHEET_ID,hose_com,500))
+    loop.run_until_complete(add_rows(agcm,HOSE_SHEET_ID,hose_com,500))
     loop.run_until_complete(add_rows(agcm,HNX_SHEET_ID,hnx_com,500))
     loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID,upcom_com,300))
 
