@@ -108,12 +108,12 @@ async def sheet(agcm, sheet_id,com_list,df_dict):
         # value_update = value(df)
         row = df.shape[0] +1
         # ws = await ss.add_worksheet(title=com, rows="100", cols="7")
-        try:
-            ws = await ss.worksheet(com)
-            logger.info(f'SHEET AWAIT {com}')
-        except:
-            ws = await ss.add_worksheet(title=com, rows="1000", cols="7")
-            logger.info(f'SHEET ADD {com}')
+        # try:
+        #     ws = await ss.worksheet(com)
+        #     logger.info(f'SHEET AWAIT {com}')
+        # except:
+        ws = await ss.add_worksheet(title=com, rows="1000", cols="7")
+        logger.info(f'SHEET ADD {com}')
 
         await ws.update(f'A1:H{row}',[df.columns.values.tolist()] + df.values.tolist())
         # print(value_update)
@@ -133,7 +133,7 @@ async def add_rows(agcm, sheet_id,com_list, num_rows):
             ws = await ss.worksheet(com)
             logger.info(f'SHEET AWAIT {com}')
         except:
-            ws = await ss.add_worksheet(title=com, rows="1000", cols="7")
+            ws = await ss.add_worksheet(title=com, rows="100", cols="7")
             logger.info(f'SHEET ADD {com}')
 
         await ws.add_rows(num_rows)
@@ -147,30 +147,37 @@ if __name__ == "__main__":
     header = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36 Edg/95.0.1020.40'}
 
-    hose_com = get_all_com('hose', cookie, header)
-    logger.info('Load all com hose')
-    hnx_com = get_all_com('hnx', cookie, header)
-    logger.info('Load all com hnx')
+    # hose_com = get_all_com('hose', cookie, header)
+    # logger.info('Load all com hose')
+    # hnx_com = get_all_com('hnx', cookie, header)
+    # logger.info('Load all com hnx')
     upcom_com = get_all_com('upcom', cookie, header)
+    upcom_com_1 = upcom_com[:int(len(upcom_com)/2)]
+    upcom_com_2 = upcom_com[int(len(upcom_com)/2):]
     logger.info('Load all com upcom')
 
     HOSE_SHEET_ID = '1Br0SphvPJH5PZ0JSFtZk24dHUsR17uxIM4s38GBCAA4'
     HNX_SHEET_ID = '1wM8UK3UbDGQJk_TkF292vYSe2OC4chxLTHVmta9D16A'
-    UPCOM_SHEET_ID = '1WAHZEe6Hgzua7izI9T3wFK7Rre1KSZVQKIG9sHGzYis'
-    TEST_SHEET_ID = '1KykDw2GYpiCuJluz_TC06nECDuzHjEI5hGSmb7VSxW8'
+    UPCOM_SHEET_ID_1 = '1p2FaHUYP-xlWe8hlLDcotl5Iv9yu5KwUGmBSnTssQCg'
+    UPCOM_SHEET_ID_2 = '1M044GDXB380wYGG7JfmUNSGVSn4obfSera5pmUBybC8'
+
+    # TEST_SHEET_ID = '1KykDw2GYpiCuJluz_TC06nECDuzHjEI5hGSmb7VSxW8'
 
     agcm = gspread_asyncio.AsyncioGspreadClientManager(get_credendital, reauth_interval=20)
     loop = asyncio.get_event_loop()
 
     # hose_df_dict = loop.run_until_complete(github('hose',hose_com))
     # hnx_df_dict = loop.run_until_complete(github('hnx',hnx_com))
-    # upcom_df_dict = loop.run_until_complete(github('upcom',upcom_com))
+    upcom_df_dict = loop.run_until_complete(github('upcom',upcom_com))
 
     # loop.run_until_complete(sheet(agcm,HOSE_SHEET_ID,hose_com,hose_df_dict))
     # loop.run_until_complete(sheet(agcm,HNX_SHEET_ID,hnx_com,hnx_df_dict))
-    # loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID,upcom_com,upcom_df_dict))
+    loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID_1,upcom_com_1,upcom_df_dict))
+    loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID_2,upcom_com_2,upcom_df_dict))
 
-    loop.run_until_complete(add_rows(agcm,HOSE_SHEET_ID,hose_com,500))
-    loop.run_until_complete(add_rows(agcm,HNX_SHEET_ID,hnx_com,500))
-    loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID,upcom_com,300))
+    # loop.run_until_complete(add_rows(agcm,HOSE_SHEET_ID,hose_com,500))
+    # loop.run_until_complete(add_rows(agcm,HNX_SHEET_ID,hnx_com,500))
+    loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_1,upcom_com,500))
+    loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_1,upcom_com,500))
+
 
