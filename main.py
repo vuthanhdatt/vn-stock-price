@@ -142,6 +142,21 @@ async def add_rows(agcm, sheet_id,com_list, num_rows):
     coros = [single_sheet(com) for com in com_list]
     await asyncio.gather(*coros)
 
+########## REMOVE SHEET #############
+async def remove_sheet(agcm, sheet_id,com_list):
+    agc = await agcm.authorize()
+    ss = await agc.open_by_key(sheet_id)
+
+    async def single_sheet(com):
+
+        ws = await ss.worksheet(com)
+        logger.info(f'SHEET AWAIT {com}')
+        await ss.del_worksheet(ws)
+        logger.info(f"DELETE {com} SHEET!")
+
+    coros = [single_sheet(com) for com in com_list]
+    await asyncio.gather(*coros)
+
 if __name__ == "__main__":
     cookie = ast.literal_eval(os.getenv('COOKIES'))
     header = {
@@ -168,16 +183,17 @@ if __name__ == "__main__":
 
     # hose_df_dict = loop.run_until_complete(github('hose',hose_com))
     # hnx_df_dict = loop.run_until_complete(github('hnx',hnx_com))
-    upcom_df_dict = loop.run_until_complete(github('upcom',upcom_com))
+    # upcom_df_dict = loop.run_until_complete(github('upcom',upcom_com))
 
     # loop.run_until_complete(sheet(agcm,HOSE_SHEET_ID,hose_com,hose_df_dict))
     # loop.run_until_complete(sheet(agcm,HNX_SHEET_ID,hnx_com,hnx_df_dict))
-    loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID_1,upcom_com_1,upcom_df_dict))
-    loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID_2,upcom_com_2,upcom_df_dict))
+    # loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID_1,upcom_com_1,upcom_df_dict))
+    # loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID_2,upcom_com_2,upcom_df_dict))
 
     # loop.run_until_complete(add_rows(agcm,HOSE_SHEET_ID,hose_com,500))
     # loop.run_until_complete(add_rows(agcm,HNX_SHEET_ID,hnx_com,500))
-    loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_1,upcom_com_1,500))
-    loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_1,upcom_com_2,500))
+    # loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_1,upcom_com_1,500))
+    loop.run_until_complete(remove_sheet(agcm, UPCOM_SHEET_ID_1,upcom_com_2))
+    loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_2,upcom_com_2,500))
 
 
