@@ -148,11 +148,13 @@ async def remove_sheet(agcm, sheet_id,com_list):
     ss = await agc.open_by_key(sheet_id)
 
     async def single_sheet(com):
-
-        ws = await ss.worksheet(com)
-        logger.info(f'SHEET AWAIT {com}')
-        await ss.del_worksheet(ws)
-        logger.info(f"DELETE {com} SHEET!")
+        try:
+            ws = await ss.worksheet(com)
+            logger.info(f'SHEET AWAIT {com}')
+            await ss.del_worksheet(ws)
+            logger.info(f"DELETE {com} SHEET!")
+        except:
+            pass
 
     coros = [single_sheet(com) for com in com_list]
     await asyncio.gather(*coros)
