@@ -98,29 +98,41 @@ async def github(exchange, com_list):
 #     return l
 
 ######## FOR UPDATING ON GOOGLE SHEET #######
-async def sheet(agcm, sheet_id,com_list,df_dict):
+async def sheet(agcm, sheet_id,com_list,df_dict,entire=False):
     agc = await agcm.authorize()
     ss = await agc.open_by_key(sheet_id)
 
-    async def single_sheet(com):
-        # df = get_price_history(com, start_date, today)
+    async def entire_single_sheet(com):
         df = df_dict[com]
         # value_update = value(df)
         row = df.shape[0] +1
-        # ws = await ss.add_worksheet(title=com, rows="100", cols="7")
-        # try:
-        #     ws = await ss.worksheet(com)
-        #     logger.info(f'SHEET AWAIT {com}')
-        # except:
-        ws = await ss.add_worksheet(title=com, rows="1000", cols="7")
-        logger.info(f'SHEET ADD {com}')
+        try:
+            ws = await ss.worksheet(com)
+            logger.info(f'SHEET AWAIT {com}')
+        except:
+            ws = await ss.add_worksheet(title=com, rows="1000", cols="7")
+            logger.info(f'SHEET ADD {com}')
 
         await ws.update(f'A1:H{row}',[df.columns.values.tolist()] + df.values.tolist())
-        # print(value_update)
-        # await ws.batch_update(value_update)
-        logger.info(f"{com} SHEET DONE!")
+        logger.info(f"UPDATE {com} SHEET DONE!")
 
-    coros = [single_sheet(com) for com in com_list]
+    async def one_row_single_sheet(com):
+        df= df_dict[com]
+        row = df.shape[0] +1
+        try:
+            ws = await ss.worksheet(com)
+            logger.info(f'SHEET AWAIT {com}')
+        except:
+            ws = await ss.add_worksheet(title=com, rows="1000", cols="7")
+            logger.info(f'SHEET ADD {com}')
+        await ws.batch_update([{'range':f'A{row}:H{row}','values':[df.values.tolist()[-1]]}])
+        logger.info(f"UPDATE {com} SHEET DONE!")
+
+
+    if entire:
+        coros = [entire_single_sheet(com) for com in com_list]
+    else:
+        coros = [one_row_single_sheet(com) for com in com_list]
     await asyncio.gather(*coros)
 
 ######### ADD ROWS ########
@@ -164,10 +176,10 @@ if __name__ == "__main__":
     header = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36 Edg/95.0.1020.40'}
 
-    # hose_com = get_all_com('hose', cookie, header)
-    # logger.info('Load all com hose')
-    # hnx_com = get_all_com('hnx', cookie, header)
-    # logger.info('Load all com hnx')
+    hose_com = get_all_com('hose', cookie, header)
+    logger.info('Load all com hose')
+    hnx_com = get_all_com('hnx', cookie, header)
+    logger.info('Load all com hnx')
     upcom_com = get_all_com('upcom', cookie, header)
     upcom_com_1 = upcom_com[:int(len(upcom_com)/2)]
     upcom_com_2 = upcom_com[int(len(upcom_com)/2):]
@@ -183,19 +195,22 @@ if __name__ == "__main__":
     agcm = gspread_asyncio.AsyncioGspreadClientManager(get_credendital, reauth_interval=20)
     loop = asyncio.get_event_loop()
 
-    # hose_df_dict = loop.run_until_complete(github('hose',hose_com))
-    # hnx_df_dict = loop.run_until_complete(github('hnx',hnx_com))
-    # upcom_df_dict = loop.run_until_complete(github('upcom',upcom_com))
+    # test_com = ['AAA','AAM','AAT','ABS']
+    # test_df_dict = loop.run_until_complete(github('hose',test_com))
+    hose_df_dict = loop.run_until_complete(github('hose',hose_com))
+    hnx_df_dict = loop.run_until_complete(github('hnx',hnx_com))
+    upcom_df_dict = loop.run_until_complete(github('upcom',upcom_com))
 
-    # loop.run_until_complete(sheet(agcm,HOSE_SHEET_ID,hose_com,hose_df_dict))
-    # loop.run_until_complete(sheet(agcm,HNX_SHEET_ID,hnx_com,hnx_df_dict))
-    # loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID_1,upcom_com_1,upcom_df_dict))
-    # loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID_2,upcom_com_2,upcom_df_dict))
+    # loop.run_until_complete(sheet(agcm,TEST_SHEET_ID,test_com,test_df_dict))
+    loop.run_until_complete(sheet(agcm,HOSE_SHEET_ID,hose_com,hose_df_dict))
+    loop.run_until_complete(sheet(agcm,HNX_SHEET_ID,hnx_com,hnx_df_dict))
+    loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID_1,upcom_com_1,upcom_df_dict))
+    loop.run_until_complete(sheet(agcm,UPCOM_SHEET_ID_2,upcom_com_2,upcom_df_dict))
 
     # loop.run_until_complete(add_rows(agcm,HOSE_SHEET_ID,hose_com,500))
     # loop.run_until_complete(add_rows(agcm,HNX_SHEET_ID,hnx_com,500))
     # loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_1,upcom_com_1,500))
-    loop.run_until_complete(remove_sheet(agcm, UPCOM_SHEET_ID_1,upcom_com_2))
-    loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_2,upcom_com_2,500))
+    # loop.run_until_complete(remove_sheet(agcm, UPCOM_SHEET_ID_1,upcom_com_2))
+    # loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_2,upcom_com_2,500))
 
 
