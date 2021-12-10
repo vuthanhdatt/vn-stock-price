@@ -177,7 +177,7 @@ if __name__ == "__main__":
 
     # loop.run_until_complete(add_rows(agcm,HOSE_SHEET_ID,hose_com,500))
     # loop.run_until_complete(add_rows(agcm,HNX_SHEET_ID,hnx_com,500))
-    loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_1,upcom_com,500))
-    loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_1,upcom_com,500))
+    loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_1,upcom_com_1,500))
+    loop.run_until_complete(add_rows(agcm,UPCOM_SHEET_ID_1,upcom_com_2,500))
 
 
