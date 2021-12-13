@@ -26,5 +26,5 @@ In my calculation, with google sheet API limit 100 request/s, time can reduce to
 ## Update
 After changing calling method, building time actually reduce.
 
-![reduce-time](https://github.com/vuthanhdatt/vn-stock-price/blob/main/images/reduce-time)
+![reduce-time](https://github.com/vuthanhdatt/vn-stock-price/blob/main/images/reduce-time.png)
 
