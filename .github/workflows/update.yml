@@ -7,7 +7,7 @@ on:
     - cron: "15 8 * * 1-5" #Run at 8:15 UTC every day except weekend
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
 
       - name: checkout repo content
